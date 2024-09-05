@@ -32,4 +32,15 @@ export class Hospital {
     getDoctores(): Doctor[] {
         return this.doctores;
     }
+
+
+    eliminarCita(id: number): boolean {
+        const index = this.citas.findIndex(cita => cita.id === id);
+        if (index !== -1) {
+            this.citas.splice(index, 1); // Elimina la cita
+            return true;
+        }
+        return false; // No se encontró la cita
+    }
+
 }

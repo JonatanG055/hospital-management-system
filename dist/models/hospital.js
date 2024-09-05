@@ -26,5 +26,13 @@ class Hospital {
     getDoctores() {
         return this.doctores;
     }
+    eliminarCita(id) {
+        const index = this.citas.findIndex(cita => cita.id === id);
+        if (index !== -1) {
+            this.citas.splice(index, 1); // Elimina la cita
+            return true;
+        }
+        return false; // No se encontró la cita
+    }
 }
 exports.Hospital = Hospital;

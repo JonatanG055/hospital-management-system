@@ -33,30 +33,49 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const readline = __importStar(require("readline"));
-const hospitalView_1 = require("./views/hospitalView");
-// Crea una interfaz readline para leer de la entrada estándar
+const hospitalView_1 = require("./views/hospitalView"); // Asegúrate de que la ruta del archivo es correcta
+// Crear una interfaz readline para leer de la entrada estándar
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-const view = new hospitalView_1.HospitalView();
-function mostrarMenuYObtenerOpcion() {
+// Crear una instancia de HospitalView
+const view = new hospitalView_1.HospitalView(rl);
+// Función para realizar una pregunta y obtener una respuesta
+function pregunta(query) {
     return new Promise((resolve) => {
-        view.mostrarMenuPrincipal();
-        rl.question('Seleccione una opción: ', (input) => {
-            const opcion = parseInt(input || '5');
-            resolve(opcion);
+        rl.question(query, (respuesta) => {
+            resolve(respuesta.trim()); // trim() para eliminar los saltos de línea o espacios
         });
     });
 }
-function main() {
+// Función para mostrar el menú principal
+function mostrarMenu() {
     return __awaiter(this, void 0, void 0, function* () {
-        let opcion;
-        do {
-            opcion = yield mostrarMenuYObtenerOpcion();
-            view.ejecutarOpcion(opcion);
-        } while (opcion !== 5);
-        rl.close(); // Cierra la interfaz readline cuando se sale del bucle
+        view.mostrarMenuPrincipal();
+        const opcion = yield pregunta('Seleccione una opción: ');
+        // Validar si la opción ingresada es un número y manejarla correctamente
+        const opcionNumero = parseInt(opcion);
+        if (isNaN(opcionNumero) || opcionNumero < 1 || opcionNumero > 6) {
+            console.log('Por favor, ingrese un número válido entre 1 y 6.');
+            yield mostrarMenu();
+        }
+        else {
+            yield manejarOpcion(opcionNumero);
+        }
     });
 }
-main();
+// Función para manejar la opción seleccionada por el usuario
+function manejarOpcion(opcion) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield view.ejecutarOpcion(opcion);
+        if (opcion !== 6) { // No volver a mostrar el menú si la opción es salir
+            yield mostrarMenu();
+        }
+        else {
+            rl.close();
+        }
+    });
+}
+// Iniciar el menú principal
+mostrarMenu();
